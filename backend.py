@@ -92,16 +92,14 @@ def transcribe_video(video_path):
 
 # Function to convert Tamil text to audio using gTTS
 def generate_audio(text):
-    """ Converts translated Tamil text into speech using gTTS and saves it as an audio file """
-    
     tts = gTTS(text=text, lang='ta')
-    
-    # Save the audio file in 'audio' folder
-    audio_filename = f"audio_{int(time.time())}.mp3"
-    audio_path = os.path.join('audio', audio_filename)
-    tts.save(audio_path)
 
-    return audio_path
+    # Create a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file:
+        audio_path = temp_file.name
+        tts.save(audio_path)
+
+    return audio_path 
 
 @app.route('/audio/<filename>', methods=['GET'])
 def get_audio(filename):
