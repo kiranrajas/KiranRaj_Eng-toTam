@@ -8,106 +8,62 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
+            margin: 50px;
         }
-        #container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            color: #333;
-        }
-        input, button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #loading {
-            display: none;
-            font-size: 18px;
-            color: #007bff;
-        }
-        #result {
+        #output {
             margin-top: 20px;
         }
         audio {
             margin-top: 10px;
-            width: 100%;
         }
     </style>
 </head>
 <body>
-
-    <div id="container">
-        <h1>Upload a Video for Translation</h1>
-        <form id="video-form" enctype="multipart/form-data">
-            <input type="file" id="video" name="video" accept="video/*" required />
-            <button type="submit">Upload & Process</button>
-        </form>
-
-        <p id="loading">Processing... Please wait.</p>
-
-        <div id="result" style="display:none;">
-            <h2>Transcribed English Text:</h2>
-            <p id="transcribed-text"></p>
-
-            <h2>Translated Tamil Text:</h2>
-            <p id="translated-text"></p>
-
-            <h2>Generated Tamil Audio:</h2>
-            <audio id="audio-player" controls></audio>
-        </div>
-    </div>
+    <h1>Upload a Video for Translation</h1>
+    <input type="file" id="videoInput" accept="video/*">
+    <button onclick="uploadVideo()">Upload & Process</button>
+    <div id="output"></div>
 
     <script>
-        document.getElementById('video-form').onsubmit = async function(event) {
-            event.preventDefault();
-            document.getElementById('loading').style.display = "block";
-            document.getElementById('result').style.display = "none";
+        async function uploadVideo() {
+            const fileInput = document.getElementById('videoInput');
+            if (!fileInput.files.length) {
+                alert("Please select a video file.");
+                return;
+            }
 
             const formData = new FormData();
-            const videoFile = document.getElementById('video').files[0];
+            formData.append("video", fileInput.files[0]);
 
-            if (videoFile) {
-                formData.append('video', videoFile);
+            document.getElementById('output').innerHTML = "Processing...";
 
-                try {
-                    const response = await fetch('http://127.0.0.1:5000/process-video', {
-                        method: 'POST',
-                        body: formData,
-                    });
+            try {
+                const response = await fetch("https://kiranraj-eng-totam.onrender.com/process-video", {
+                    method: "POST",
+                    body: formData
+                });
 
-                    if (response.ok) {
-                        const result = await response.json();
-                        document.getElementById('loading').style.display = "none";
-                        document.getElementById('result').style.display = "block";
-
-                        document.getElementById('transcribed-text').innerText = result.english_text;
-                        document.getElementById('translated-text').innerText = result.tamil_text;
-                        document.getElementById('audio-player').src = result.audio_url;
-                    } else {
-                        alert('Error processing video.');
-                    }
-                } catch (error) {
-                    alert('Something went wrong.');
+                const data = await response.json();
+                if (data.error) {
+                    document.getElementById('output').innerHTML = "Error: " + data.error;
+                    return;
                 }
-            } else {
-                alert('Please select a video file.');
-            }
-        };
-    </script>
 
+                document.getElementById('output').innerHTML = `
+                    <h3>English Text:</h3>
+                    <p>${data.english_text}</p>
+                    <h3>Tamil Translation:</h3>
+                    <p>${data.tamil_text}</p>
+                    <h3>Audio Output:</h3>
+                    <audio controls>
+                        <source src="${data.audio_url}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = "Error: " + error.message;
+            }
+        }
+    </script>
 </body>
 </html>
