@@ -61,7 +61,8 @@ def process_video():
         return jsonify({
             'english_text': english_text,
             'tamil_text': translated_text,
-            'audio_url': f"http://127.0.0.1:5000/audio/{os.path.basename(audio_path)}"
+            RENDER_URL = os.getenv("RENDER_URL", "https://your-app-name.onrender.com")
+            'audio_url': f"{RENDER_URL}/audio/{os.path.basename(audio_path)}"
         })
 
     except Exception as e:
