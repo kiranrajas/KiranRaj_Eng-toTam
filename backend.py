@@ -13,7 +13,7 @@ load_dotenv()
 
 # Set AssemblyAI API Key
 aai.settings.api_key = "e518225f93a7463d874f7edd1f9608b7"  # Replace with your actual key
-
+RENDER_URL = os.getenv("RENDER_URL", "https://kiranraj-eng-totam-1.onrender.com")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -61,7 +61,6 @@ def process_video():
         return jsonify({
             'english_text': english_text,
             'tamil_text': translated_text,
-           RENDER_URL = os.getenv("RENDER_URL", "https://kiranraj-eng-totam-1.onrender.com")
            'audio_url': f"{RENDER_URL}/audio/{os.path.basename(audio_path)}"
         })
 
