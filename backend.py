@@ -12,7 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set AssemblyAI API Key
-aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
+aai.settings.api_key = "e518225f93a7463d874f7edd1f9608b7"  # Replace with your actual key
+
 
 # Initialize Flask app
 app = Flask(__name__)
