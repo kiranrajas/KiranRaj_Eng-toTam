@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Set AssemblyAI API Key
-aai.settings.api_key = "e518225f93a7463d874f7edd1f9608b7"  # Replace with your actual key
+aai.settings.api_key = "e518225f93a7463d874f7edd1f9608b7"  
 RENDER_URL = os.getenv("RENDER_URL", "https://kiranraj-eng-totam-1.onrender.com")
 
 # Initialize Flask app
